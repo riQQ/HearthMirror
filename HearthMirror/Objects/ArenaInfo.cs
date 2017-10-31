@@ -9,5 +9,6 @@ namespace HearthMirror.Objects
 		public int Wins { get; set; }
 		public int CurrentSlot { get; set; }
 		public List<RewardData> Rewards { get; set; }
+		public int Season { get; set; }
 	}
 }

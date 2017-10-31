@@ -244,12 +244,16 @@ namespace HearthMirror
 			var deck = GetDeck(draftManager["m_draftDeck"]);
 			if(deck == null)
 				return null;
+
+			var season = draftManager["m_currentSeason"]?["_Season"]?["<GameContentSeason>k__BackingField"]?["<SeasonId>k__BackingField"];
+
 			return new ArenaInfo {
 				Wins = draftManager["m_wins"],
 				Losses = draftManager["m_losses"],
 				CurrentSlot = draftManager["m_currentSlot"],
 				Deck = deck,
-				Rewards = RewardDataParser.Parse(draftManager["m_chest"]?["<Rewards>k__BackingField"]?["_items"])
+				Rewards = RewardDataParser.Parse(draftManager["m_chest"]?["<Rewards>k__BackingField"]?["_items"]),
+				Season = season
 			};
 		}
 
