@@ -195,6 +195,8 @@ namespace HearthMirror
 						matchInfo.OpposingPlayer = new MatchInfo.Player(id, name, sRank, sLegendRank, 0, wRank, wLegendRank, 0, cardBack, accountId);
 				}
 			}
+			if(matchInfo.LocalPlayer == null || matchInfo.OpposingPlayer == null)
+				return null;
 			var gameMgr = Mirror.Root["GameMgr"]["s_instance"];
 			if(gameMgr != null)
 			{
