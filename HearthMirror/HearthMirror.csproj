@@ -59,12 +59,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\GameSaveKeyId.cs" />
+    <Compile Include="Enums\GameSaveKeySubkeyId.cs" />
     <Compile Include="Objects\BrawlInfo.cs" />
     <Compile Include="Enums\BoxState.cs" />
     <Compile Include="Enums\Side.cs" />
     <Compile Include="Enums\Status.cs" />
     <Compile Include="Objects\AccountId.cs" />
     <Compile Include="Objects\BattleTag.cs" />
+    <Compile Include="Objects\DungeonInfo.cs" />
     <Compile Include="Objects\GameServerInfo.cs" />
     <Compile Include="Objects\ArenaInfo.cs" />
     <Compile Include="Cache.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Enums\SceneMode.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Enums\UI_WINDOW.cs" />
+    <Compile Include="Util\DungeonInfoParser.cs" />
     <Compile Include="Util\RewardDataParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

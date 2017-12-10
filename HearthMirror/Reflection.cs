@@ -509,6 +509,31 @@ namespace HearthMirror
 			return brawlInfo;
 		}
 
+		public static DungeonInfo GetDungeonInfo() => TryGetInternal(GetDungeonInfoInternal);
+
+		private static DungeonInfo GetDungeonInfoInternal()
+		{
+			var dataMap = Mirror.Root["GameSaveDataManager"]?["s_instance"]?["m_gameSaveDataMapByKey"];
+			if(dataMap == null)
+				return null;
+			var index = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_LOOT);
+			if(index == -1)
+				return null;
+			var subMap = dataMap["valueSlots"][index];
+			return new DungeonInfoParser(subMap);
+		}
+
+		internal static int GetKeyIndex(dynamic map, int key)
+		{
+			var keys = map["keySlots"];
+			for(var i = 0; i < keys.Length; i++)
+			{
+				if(keys[i]["value__"] == key)
+					return i;
+			}
+			return -1;
+		}
+
 		public static bool IsLogEnabled(string name) => TryGetInternal(() => IsLogEnabledInternal(name));
 
 		private static bool IsLogEnabledInternal(string name)
