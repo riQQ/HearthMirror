@@ -43,7 +43,7 @@ namespace HearthMirror
 
 		private static IEnumerable<Card> GetCollectionInternal()
 		{
-			var values = Mirror.Root["NetCache"]["s_instance"]["m_netCache"]["valueSlots"];
+			var values = Mirror.Root?["NetCache"]["s_instance"]["m_netCache"]["valueSlots"];
 			foreach(var val in values)
 			{
 				if(val == null || val.Class.Name != "NetCacheCollection") continue;
@@ -66,7 +66,7 @@ namespace HearthMirror
 
 		private static IEnumerable<Deck> InternalGetDecks()
 		{
-			var values = Mirror.Root["CollectionManager"]["s_instance"]?["m_decks"]?["valueSlots"];
+			var values = Mirror.Root?["CollectionManager"]["s_instance"]?["m_decks"]?["valueSlots"];
 			if(values == null)
 				yield break; 
 			foreach(var val in values)
@@ -82,7 +82,7 @@ namespace HearthMirror
 		public static GameServerInfo GetServerInfo() => TryGetInternal(InternalGetServerInfo);
 		private static GameServerInfo InternalGetServerInfo()
 		{
-			var serverInfo = Mirror.Root["Network"]["s_instance"]["m_lastGameServerInfo"];
+			var serverInfo = Mirror.Root?["Network"]["s_instance"]["m_lastGameServerInfo"];
 			if(serverInfo == null)
 				return null;
 			return new GameServerInfo
@@ -101,16 +101,16 @@ namespace HearthMirror
 		}
 
 		public static int GetGameType() => TryGetInternal(InternalGetGameType);
-		private static int InternalGetGameType() => (int) Mirror.Root["GameMgr"]["s_instance"]["m_gameType"];
+		private static int InternalGetGameType() => (int) Mirror.Root?["GameMgr"]["s_instance"]["m_gameType"];
 
-		public static bool IsSpectating() => TryGetInternal(() => Mirror.Root["GameMgr"]?["s_instance"]?["m_spectator"]) ?? false;
+		public static bool IsSpectating() => TryGetInternal(() => Mirror.Root?["GameMgr"]?["s_instance"]?["m_spectator"]) ?? false;
 
-		public static long GetSelectedDeckInMenu() => TryGetInternal(() => (long)(Mirror.Root["DeckPickerTrayDisplay"]["s_instance"]?["m_selectedCustomDeckBox"]?["m_deckID"] ?? 0));
+		public static long GetSelectedDeckInMenu() => TryGetInternal(() => (long)(Mirror.Root?["DeckPickerTrayDisplay"]["s_instance"]?["m_selectedCustomDeckBox"]?["m_deckID"] ?? 0));
 
 		public static MedalInfo GetMedalInfo() => TryGetInternal(GetMedalInfoInternal);
 		private static MedalInfo GetMedalInfoInternal()
 		{
-			var netCacheValues = Mirror.Root["NetCache"]["s_instance"]?["m_netCache"]?["valueSlots"];
+			var netCacheValues = Mirror.Root?["NetCache"]["s_instance"]?["m_netCache"]?["valueSlots"];
 			if(netCacheValues == null)
 				return null;
 			dynamic netCacheMedalInfo = null;
@@ -154,8 +154,8 @@ namespace HearthMirror
 		private static MatchInfo GetMatchInfoInternal()
 		{
 			var matchInfo = new MatchInfo();
-			var gameState = Mirror.Root["GameState"]["s_instance"];
-			var netCacheValues = Mirror.Root["NetCache"]["s_instance"]?["m_netCache"]?["valueSlots"];
+			var gameState = Mirror.Root?["GameState"]["s_instance"];
+			var netCacheValues = Mirror.Root?["NetCache"]["s_instance"]?["m_netCache"]?["valueSlots"];
 			if(gameState != null)
 			{
 				var playerIds = gameState["m_playerMap"]["keySlots"];
@@ -200,7 +200,7 @@ namespace HearthMirror
 			}
 			if(matchInfo.LocalPlayer == null || matchInfo.OpposingPlayer == null)
 				return null;
-			var gameMgr = Mirror.Root["GameMgr"]["s_instance"];
+			var gameMgr = Mirror.Root?["GameMgr"]["s_instance"];
 			if(gameMgr != null)
 			{
 				matchInfo.MissionId = gameMgr["m_missionId"];
@@ -229,7 +229,7 @@ namespace HearthMirror
 
 		private static dynamic GetCurrentBrawlMission()
 		{
-			var missions = Mirror.Root["TavernBrawlManager"]["s_instance"]?["m_missions"];
+			var missions = Mirror.Root?["TavernBrawlManager"]["s_instance"]?["m_missions"];
 			if(missions == null) 
 				return null;
 			foreach(var mission in missions)
@@ -245,7 +245,7 @@ namespace HearthMirror
 
 		private static ArenaInfo GetArenaDeckInternal()
 		{
-			var draftManager = Mirror.Root["DraftManager"]["s_instance"];
+			var draftManager = Mirror.Root?["DraftManager"]["s_instance"];
 			var deck = GetDeck(draftManager["m_draftDeck"]);
 			if(deck == null)
 				return null;
@@ -266,7 +266,7 @@ namespace HearthMirror
 
 		private static IEnumerable<Card> GetArenaDraftChoicesInternal()
 		{
-			var choicesList =  Mirror.Root["DraftDisplay"]["s_instance"]["m_choices"];
+			var choicesList =  Mirror.Root?["DraftDisplay"]["s_instance"]["m_choices"];
 			var choices = choicesList["_items"];
 			int size = choicesList["_size"];
 			for(var i = 0; i < size; i++)
@@ -313,12 +313,12 @@ namespace HearthMirror
 			return deck;
 		}
 
-		public static int GetFormat() => TryGetInternal(() => (int)Mirror.Root["GameMgr"]["s_instance"]["m_formatType"]);
+		public static int GetFormat() => TryGetInternal(() => (int)Mirror.Root?["GameMgr"]["s_instance"]["m_formatType"]);
 
 		public static Deck GetEditedDeck() => TryGetInternal(GetEditedDeckInternal);
 		private static Deck GetEditedDeckInternal()
 		{
-			var taggedDecks = Mirror.Root["CollectionManager"]["s_instance"]["m_taggedDecks"];
+			var taggedDecks = Mirror.Root?["CollectionManager"]["s_instance"]["m_taggedDecks"];
 			var tags = taggedDecks["keySlots"];
 			var decks = taggedDecks["valueSlots"];
 			for (var i = 0; i < tags.Length; i++)
@@ -331,66 +331,66 @@ namespace HearthMirror
 			return null;
 		}
 
-		public static bool IsFriendsListVisible() => TryGetInternal(() => Mirror.Root["ChatMgr"]?["s_instance"]?["m_friendListFrame"]) != null;
+		public static bool IsFriendsListVisible() => TryGetInternal(() => Mirror.Root?["ChatMgr"]?["s_instance"]?["m_friendListFrame"]) != null;
 
-		public static bool IsGameMenuVisible() => TryGetInternal(() => Mirror.Root["GameMenu"]?["s_instance"]?["m_isShown"]) ?? false;
+		public static bool IsGameMenuVisible() => TryGetInternal(() => Mirror.Root?["GameMenu"]?["s_instance"]?["m_isShown"]) ?? false;
 
-		public static bool IsOptionsMenuVisible() => TryGetInternal(() => Mirror.Root["OptionsMenu"]?["s_instance"]?["m_isShown"]) ?? false;
+		public static bool IsOptionsMenuVisible() => TryGetInternal(() => Mirror.Root?["OptionsMenu"]?["s_instance"]?["m_isShown"]) ?? false;
 
-		public static bool IsMulligan() => TryGetInternal(() => Mirror.Root["MulliganManager"]?["s_instance"]?["mulliganChooseBanner"]) != null;
+		public static bool IsMulligan() => TryGetInternal(() => Mirror.Root?["MulliganManager"]?["s_instance"]?["mulliganChooseBanner"]) != null;
 
-		public static int GetNumMulliganCards() => TryGetInternal(() => Mirror.Root["MulliganManager"]?["s_instance"]?["m_startingCards"]?["_size"]) ?? 0;
+		public static int GetNumMulliganCards() => TryGetInternal(() => Mirror.Root?["MulliganManager"]?["s_instance"]?["m_startingCards"]?["_size"]) ?? 0;
 
-		public static bool IsChoosingCard() => (TryGetInternal(() => Mirror.Root["ChoiceCardMgr"]?["s_instance"]?["m_subOptionState"]) != null)
-				|| ((int)(TryGetInternal(() => Mirror.Root["ChoiceCardMgr"]?["s_instance"]?["m_choiceStateMap"]?["count"]) ?? 0) > 0);
+		public static bool IsChoosingCard() => (TryGetInternal(() => Mirror.Root?["ChoiceCardMgr"]?["s_instance"]?["m_subOptionState"]) != null)
+				|| ((int)(TryGetInternal(() => Mirror.Root?["ChoiceCardMgr"]?["s_instance"]?["m_choiceStateMap"]?["count"]) ?? 0) > 0);
 
-		public static int GetNumChoiceCards() => TryGetInternal(() => Mirror.Root["ChoiceCardMgr"]?["s_instance"]?["m_lastShownChoices"]?["_size"]) ?? 0;
+		public static int GetNumChoiceCards() => TryGetInternal(() => Mirror.Root?["ChoiceCardMgr"]?["s_instance"]?["m_lastShownChoices"]?["_size"]) ?? 0;
 
-		public static bool IsPlayerEmotesVisible() => TryGetInternal(() => Mirror.Root["EmoteHandler"]?["s_instance"]?["m_emotesShown"]) ?? false;
+		public static bool IsPlayerEmotesVisible() => TryGetInternal(() => Mirror.Root?["EmoteHandler"]?["s_instance"]?["m_emotesShown"]) ?? false;
 
-		public static bool IsEnemyEmotesVisible() => TryGetInternal(() => Mirror.Root["EnemyEmoteHandler"]?["s_instance"]?["m_emotesShown"]) ?? false;
+		public static bool IsEnemyEmotesVisible() => TryGetInternal(() => Mirror.Root?["EnemyEmoteHandler"]?["s_instance"]?["m_emotesShown"]) ?? false;
 
-		public static bool IsInBattlecryEffect() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_isInBattleCryEffect"]) ?? false;
+		public static bool IsInBattlecryEffect() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_isInBattleCryEffect"]) ?? false;
 
-		public static bool IsDragging() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_dragging"]) ?? false;
+		public static bool IsDragging() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_dragging"]) ?? false;
 
-		public static bool IsTargetingHeroPower() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_targettingHeroPower"]) ?? false;
+		public static bool IsTargetingHeroPower() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_targettingHeroPower"]) ?? false;
 
-		public static int GetBattlecrySourceCardZonePosition() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_battlecrySourceCard"]?["m_zonePosition"]) ?? 0;
+		public static int GetBattlecrySourceCardZonePosition() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_battlecrySourceCard"]?["m_zonePosition"]) ?? 0;
 
-		public static bool IsHoldingCard() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_heldCard"]) != null;
+		public static bool IsHoldingCard() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_heldCard"]) != null;
 
-		public static bool IsTargetReticleActive() => TryGetInternal(() => Mirror.Root["TargetReticleManager"]?["s_instance"]?["m_isActive"]) ?? false;
+		public static bool IsTargetReticleActive() => TryGetInternal(() => Mirror.Root?["TargetReticleManager"]?["s_instance"]?["m_isActive"]) ?? false;
 
-		public static bool IsEnemyTargeting() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_isEnemyArrow"]) ?? false;
+		public static bool IsEnemyTargeting() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_isEnemyArrow"]) ?? false;
 
-		public static bool IsGameOver() => TryGetInternal(() => Mirror.Root["GameState"]?["s_instance"]?["m_gameOver"]) ?? false;
+		public static bool IsGameOver() => TryGetInternal(() => Mirror.Root?["GameState"]?["s_instance"]?["m_gameOver"]) ?? false;
 
-		public static bool WasRestartRequested() => TryGetInternal(() => Mirror.Root["GameState"]?["s_instance"]?["m_restartRequested"]) ?? false;
+		public static bool WasRestartRequested() => TryGetInternal(() => Mirror.Root?["GameState"]?["s_instance"]?["m_restartRequested"]) ?? false;
 
-		public static bool IsInMainMenu() => (int)(TryGetInternal(() => Mirror.Root["Box"]?["s_instance"]?["m_state"]) ?? -1) == (int)BoxState.HUB_WITH_DRAWER;
+		public static bool IsInMainMenu() => (int)(TryGetInternal(() => Mirror.Root?["Box"]?["s_instance"]?["m_state"]) ?? -1) == (int)BoxState.HUB_WITH_DRAWER;
 
-		public static UI_WINDOW GetShownUiWindowId() => (UI_WINDOW)(TryGetInternal(() => Mirror.Root["ShownUIMgr"]?["s_instance"]?["m_shownUI"]) ?? UI_WINDOW.NONE);
+		public static UI_WINDOW GetShownUiWindowId() => (UI_WINDOW)(TryGetInternal(() => Mirror.Root?["ShownUIMgr"]?["s_instance"]?["m_shownUI"]) ?? UI_WINDOW.NONE);
 
-		public static bool IsPlayerHandZoneUpdatingLayout() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_myHandZone"]?["m_updatingLayout"]) ?? false;
+		public static bool IsPlayerHandZoneUpdatingLayout() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_myHandZone"]?["m_updatingLayout"]) ?? false;
 
-		public static bool IsPlayerPlayZoneUpdatingLayout() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_myPlayZone"]?["m_updatingLayout"]) ?? false;
+		public static bool IsPlayerPlayZoneUpdatingLayout() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_myPlayZone"]?["m_updatingLayout"]) ?? false;
 
-		public static SceneMode GetCurrentSceneMode() => (SceneMode)(TryGetInternal(() => Mirror.Root["SceneMgr"]?["s_instance"]?["m_mode"]) ?? SceneMode.INVALID);
+		public static SceneMode GetCurrentSceneMode() => (SceneMode)(TryGetInternal(() => Mirror.Root?["SceneMgr"]?["s_instance"]?["m_mode"]) ?? SceneMode.INVALID);
 
-		public static int GetNumCardsPlayerHand() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_myHandZone"]?["m_cards"]?["_size"]) ?? 0;
+		public static int GetNumCardsPlayerHand() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_myHandZone"]?["m_cards"]?["_size"]) ?? 0;
 
-		public static int GetNumCardsPlayerBoard() => TryGetInternal(() => Mirror.Root["InputManager"]?["s_instance"]?["m_myPlayZone"]?["m_cards"]?["_size"]) ?? 0;
+		public static int GetNumCardsPlayerBoard() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_myPlayZone"]?["m_cards"]?["_size"]) ?? 0;
 
-		public static int GetNavigationHistorySize() => TryGetInternal(() => Mirror.Root["Navigation"]?["history"]?["_size"]) ?? 0;
+		public static int GetNavigationHistorySize() => TryGetInternal(() => Mirror.Root?["Navigation"]?["history"]?["_size"]) ?? 0;
 
-		public static int GetCurrentManaFilter() => TryGetInternal(() => (int)Mirror.Root["CollectionManagerDisplay"]["s_instance"]["m_manaTabManager"]["m_currentFilterValue"]);
+		public static int GetCurrentManaFilter() => TryGetInternal(() => (int)Mirror.Root?["CollectionManagerDisplay"]["s_instance"]["m_manaTabManager"]["m_currentFilterValue"]);
 
 		public static SetFilterItem GetCurrentSetFilter() => TryGetInternal(GetCurrentSetFilterInternal);
 
 		private static SetFilterItem GetCurrentSetFilterInternal()
 		{
-			var item = Mirror.Root["CollectionManagerDisplay"]["s_instance"]["m_setFilterTray"]["m_selected"];
+			var item = Mirror.Root?["CollectionManagerDisplay"]["s_instance"]["m_setFilterTray"]["m_selected"];
 			return new SetFilterItem()
 			{
 				IsAllStandard =  (bool)item["m_isAllStandard"],
@@ -402,7 +402,7 @@ namespace HearthMirror
 
 		private static BattleTag GetBattleTagInternal()
 		{
-			var bTag = Mirror.Root["BnetPresenceMgr"]["s_instance"]["m_myPlayer"]["m_account"]["m_battleTag"];
+			var bTag = Mirror.Root?["BnetPresenceMgr"]["s_instance"]["m_myPlayer"]["m_account"]["m_battleTag"];
 			return new BattleTag
 			{
 				Name = bTag["m_name"],
@@ -414,7 +414,7 @@ namespace HearthMirror
 
 		private static IEnumerable<Card> GetPackCardsInternal()
 		{
-			var cards = Mirror.Root["PackOpening"]["s_instance"]["m_director"]?["m_hiddenCards"]?["_items"];
+			var cards = Mirror.Root?["PackOpening"]["s_instance"]["m_director"]?["m_hiddenCards"]?["_items"];
 			if(cards == null)
 				yield break;
 			foreach(var card in cards)
@@ -432,7 +432,7 @@ namespace HearthMirror
 
 		private static IEnumerable<RewardData> GetArenaRewardsInternal()
 		{
-			var rewards = Mirror.Root["DraftManager"]["s_instance"]["m_chest"]?["<Rewards>k__BackingField"]?["_items"];
+			var rewards = Mirror.Root?["DraftManager"]["s_instance"]["m_chest"]?["<Rewards>k__BackingField"]?["_items"];
 			return RewardDataParser.Parse(rewards);
 		}
 
@@ -440,7 +440,7 @@ namespace HearthMirror
 
 		private static SeasonEndInfo GetSeasonEndInfoInternal()
 		{
-			var dialog = Mirror.Root["DialogManager"]["s_instance"]["m_currentDialog"];
+			var dialog = Mirror.Root?["DialogManager"]["s_instance"]["m_currentDialog"];
 			if(dialog?.Class.Name != "SeasonEndDialog" || !dialog["m_shown"])
 				return null;
 			var info = dialog["m_seasonEndInfo"];
@@ -456,13 +456,13 @@ namespace HearthMirror
 				rewards);
 		}
 
-		public static int GetLastOpenedBoosterId() => (int)(TryGetInternal(() => Mirror.Root["PackOpening"]?["s_instance"]?["m_lastOpenedBoosterId"]) ?? 0);
+		public static int GetLastOpenedBoosterId() => (int)(TryGetInternal(() => Mirror.Root?["PackOpening"]?["s_instance"]?["m_lastOpenedBoosterId"]) ?? 0);
 
 		public static AccountId GetAccountId() => TryGetInternal(GetAccountIdInternal);
 
 		private static AccountId GetAccountIdInternal()
 		{
-			var accId = Mirror.Root["BnetPresenceMgr"]?["s_instance"]?["m_myGameAccountId"];
+			var accId = Mirror.Root?["BnetPresenceMgr"]?["s_instance"]?["m_myGameAccountId"];
 			return accId == null ? null : new AccountId {Hi = accId["m_hi"], Lo = accId["m_lo"]};
 		}
 
@@ -480,7 +480,7 @@ namespace HearthMirror
 				MaxLosses = mission["tavernBrawlSpec"]?["_MaxLosses"]
 			};
 
-			var records = Mirror.Root["TavernBrawlManager"]["s_instance"]?["m_playerRecords"];
+			var records = Mirror.Root?["TavernBrawlManager"]["s_instance"]?["m_playerRecords"];
 			if(records == null)
 				return null;
 
@@ -516,7 +516,7 @@ namespace HearthMirror
 
 		private static DungeonInfo GetDungeonInfoInternal()
 		{
-			var dataMap = Mirror.Root["GameSaveDataManager"]?["s_instance"]?["m_gameSaveDataMapByKey"];
+			var dataMap = Mirror.Root?["GameSaveDataManager"]?["s_instance"]?["m_gameSaveDataMapByKey"];
 			if(dataMap == null)
 				return null;
 			var index = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_LOOT);
@@ -541,7 +541,7 @@ namespace HearthMirror
 
 		private static bool IsLogEnabledInternal(string name)
 		{
-			var logs = Mirror.Root["Log"]?["s_instance"]?["m_logInfos"]?["valueSlots"];
+			var logs = Mirror.Root?["Log"]?["s_instance"]?["m_logInfos"]?["valueSlots"];
 			if(logs == null)
 				return false;
 			for(var i = 0; i < logs.Length; i++)
@@ -559,8 +559,7 @@ namespace HearthMirror
 			{
 				"NetCache", "GameState", "Log", "TavernBrawlManager", "TavernBrawlDisplay", "BnetPresenceMgr", "DraftManager",
 				"PackOpening", "CollectionManagerDisplay", "GameMgr", "Network", "DraftManager", "DraftDisplay"
-			}.Select(x => Mirror.Root[x]?["s_instance"]).ToList();
-
+			}.Select(x => Mirror.Root?[x]?["s_instance"]).ToList();
 			System.Diagnostics.Debugger.Break();
 		}
 #endif

@@ -40,6 +40,8 @@ namespace HearthMirror
 				if(_root != null)
 					return _root;
 				var view = View;
+				if(view == null)
+					return null;
 				var rootDomainFunc = view.GetExport("mono_get_root_domain");
 				var buffer = new byte[6];
 				view.ReadBytes(buffer, 0, 6, rootDomainFunc);
