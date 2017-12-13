@@ -48,16 +48,27 @@ namespace HearthMirror.Util
 		private bool GetValue<T>(GameSaveKeySubkeyId key, out List<T> values)
 		{
 			values = null;
-			var subIndex = Reflection.GetKeyIndex(_map, (int)key);
-			var list = _map["valueSlots"][subIndex]?[GetTypeKey(typeof(T))];
-			var size = (int)list["_size"];
-			if(size <= 0)
+			try
+			{
+				var subIndex = Reflection.GetKeyIndex(_map, (int)key);
+				if(subIndex == -1)
+					return false;
+				var list = _map["valueSlots"][subIndex]?[GetTypeKey(typeof(T))];
+				if(list == null)
+					return false;
+				var size = (int)list["_size"];
+				if(size <= 0)
+					return false;
+				values = new List<T>();
+				var items = list["_items"];
+				for(var i = 0; i < size; i++)
+					values.Add((T)items[i]);
+				return true;
+			}
+			catch(Exception e)
+			{
 				return false;
-			values = new List<T>();
-			var items = list["_items"];
-			for(var i = 0; i < size; i++)
-				values.Add((T)items[i]);
-			return true;
+			}
 		}
 
 		private string GetTypeKey(Type t)

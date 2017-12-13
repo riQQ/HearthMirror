@@ -25,14 +25,14 @@ namespace HearthMirror
 					Mirror.View?.ClearCache();
 				return action.Invoke();
 			}
-			catch
+			catch(Exception e)
 			{
 				Mirror.Clean();
 				try
 				{
 					return action.Invoke();
 				}
-				catch
+				catch(Exception e2)
 				{
 					return default(T);
 				}
