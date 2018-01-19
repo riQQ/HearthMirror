@@ -39,6 +39,8 @@ namespace HearthMirror
 			}
 		}
 
+		public static void Reinitialize() => Mirror.Clean();
+
 		public static List<Card> GetCollection() => TryGetInternal(() => GetCollectionInternal().ToList());
 
 		private static IEnumerable<Card> GetCollectionInternal()
