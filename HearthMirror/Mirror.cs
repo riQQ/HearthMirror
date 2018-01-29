@@ -31,6 +31,7 @@ namespace HearthMirror
 			_process = null;
 			_view = null;
 			_root = null;
+			GC.Collect();
 		}
 
 		public dynamic Root
