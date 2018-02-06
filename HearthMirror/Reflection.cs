@@ -213,7 +213,7 @@ namespace HearthMirror
 				if(brawlGameTypes.Contains(matchInfo.GameType))
 				{
 					var mission = GetCurrentBrawlMission();
-					matchInfo.BrawlSeasonId = mission?["tavernBrawlSpec"]?["<SeasonId>k__BackingField"];
+					matchInfo.BrawlSeasonId = mission?["tavernBrawlSpec"]?["<GameContentSeason>k__BackingField"]?["<SeasonId>k__BackingField"];
 				}
 			}
 			if(netCacheValues != null)
@@ -484,8 +484,8 @@ namespace HearthMirror
 
 			var brawlInfo = new BrawlInfo
 			{
-				MaxWins = mission["tavernBrawlSpec"]?["_MaxWins"],
-				MaxLosses = mission["tavernBrawlSpec"]?["_MaxLosses"]
+				MaxWins = mission["tavernBrawlSpec"]?["<GameContentSeason>k__BackingField"]?["_MaxWins"],
+				MaxLosses = mission["tavernBrawlSpec"]?["<GameContentSeason>k__BackingField"]?["_MaxLosses"]
 			};
 
 			var records = Mirror.Root?["TavernBrawlManager"]["s_instance"]?["m_playerRecords"];
