@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HearthSim")]
 [assembly: AssemblyProduct("HearthMirror")]
-[assembly: AssemblyCopyright("Copyright © HearthSim 2016")]
+[assembly: AssemblyCopyright("Copyright © HearthSim 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
