@@ -14,7 +14,7 @@ namespace HearthMirror.Objects
 
 		public class Player
 		{
-			public Player(int id, string name, int standardRank, int standardLegendRank, int standardStars, int wildRank, int wildLegendRank, int wildStars, int cardBackId, AccountId accountId)
+			public Player(int id, string name, int standardRank, int standardLegendRank, int standardStars, int wildRank, int wildLegendRank, int wildStars, int cardBackId, AccountId accountId, BattleTag battleTag)
 			{
 				Id = id;
 				Name = name;
@@ -26,6 +26,7 @@ namespace HearthMirror.Objects
 				WildStars = wildStars;
 				CardBackId = cardBackId;
 				AccountId = accountId;
+				BattleTag = battleTag;
 			}
 
 			public string Name { get; set; }
@@ -38,6 +39,7 @@ namespace HearthMirror.Objects
 			public int WildStars { get; set; }
 			public int CardBackId { get; set; }
 			public AccountId AccountId { get; set; }
+			public BattleTag BattleTag { get; set; }
 		}
 	}
 }
