@@ -12,6 +12,8 @@ namespace HearthMirror.Objects
 		public int SeasonId { get; set; }
 		public int CardBackId { get; set; }
 		public int HeroPremium { get; set; }
+		public int SourceType { get; set; }
+		public ulong CreateDate { get; set; }
 		public List<Card> Cards { get; set; } = new List<Card>();
 	}
 }

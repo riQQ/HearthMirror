@@ -356,6 +356,8 @@ namespace HearthMirror
 				SeasonId = deckObj["SeasonId"],
 				CardBackId = deckObj["CardBackID"],
 				HeroPremium = deckObj["HeroPremium"],
+				SourceType = deckObj["SourceType"],
+				CreateDate = deckObj["CreateDate"]
 			};
 			var cardList = deckObj["m_slots"];
 			var cards = cardList["_items"];
