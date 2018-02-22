@@ -2,6 +2,7 @@
 {
 	public class Card
 	{
+		public int DbfId { get; }
 		public string Id { get; }
 		public int Count { get; set; }
 		public bool Premium { get; }

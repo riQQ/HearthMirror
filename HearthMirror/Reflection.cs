@@ -41,27 +41,70 @@ namespace HearthMirror
 
 		public static void Reinitialize() => Mirror.Clean();
 
-		public static List<Card> GetCollection() => TryGetInternal(() => GetCollectionInternal().ToList());
+		public static List<Card> GetCollection() => TryGetInternal(() => GetCollectionInternal()?.Cards.ToList());
 
-		private static IEnumerable<Card> GetCollectionInternal()
+		public static Collection GetFullCollection() => TryGetInternal(GetCollectionInternal);
+
+		private static Collection GetCollectionInternal()
 		{
-			var values = Mirror.Root?["NetCache"]["s_instance"]["m_netCache"]["valueSlots"];
-			foreach(var val in values)
+			var collection = new Collection();
+
+			var collectibleCards = Mirror.Root?["CollectionManager"]["s_instance"]?["m_collectibleCards"];
+			if(collectibleCards != null)
 			{
-				if(val == null || val.Class.Name != "NetCacheCollection") continue;
-				var stacks = val["<Stacks>k__BackingField"];
-				var items = stacks["_items"];
-				int size = stacks["_size"];
+				var items = collectibleCards["_items"];
+				int size = collectibleCards["_size"];
 				for(var i = 0; i < size; i++)
 				{
-					var stack = items[i];
-					int count = stack["<Count>k__BackingField"];
-					var def = stack["<Def>k__BackingField"];
-					string name = def["<Name>k__BackingField"];
-					int premium = def["<Premium>k__BackingField"];
-					yield return new Card(name, count, premium > 0);
+					string cardId = items[i]["m_EntityDef"]["m_cardId"];
+					int count = items[i]["<OwnedCount>k__BackingField"];
+					int premium = items[i]["m_PremiumType"];
+					collection.Cards.Add(new Card(cardId, count, premium > 0));
 				}
 			}
+
+			var netCacheValues = Mirror.Root?["NetCache"]["s_instance"]["m_netCache"]["valueSlots"];
+			if(netCacheValues != null)
+			{
+				foreach(var val in netCacheValues)
+				{
+					if(val == null)
+						continue;
+					if(val.Class.Name == "NetCacheArcaneDustBalance")
+						collection.Dust = (int)val["<Balance>k__BackingField"];
+					else if(val.Class.Name == "NetCacheGoldBalance")
+						collection.Gold = (int)val["<CappedBalance>k__BackingField"] + (int)val["<BonusBalance>k__BackingField"];
+					else if(val.Class.Name == "NetCacheCardBacks")
+					{
+						var cardBacks = val["<CardBacks>k__BackingField"];
+						var slots = cardBacks["slots"];
+						for(var i = 0; i < slots.Length; i++)
+						{
+							if(!collection.CardBacks.Contains(slots[i])) 
+								collection.CardBacks.Add(slots[i]);
+						}
+						collection.FavoriteCardBack = (int)val["<DefaultCardBack>k__BackingField"];
+					}
+					else if(val.Class.Name == "NetCacheFavoriteHeroes")
+					{
+						var keys = val["<FavoriteHeroes>k__BackingField"]["keySlots"];
+						var values = val["<FavoriteHeroes>k__BackingField"]["valueSlots"];
+						for(var i = 0; i < keys.Length; i++)
+						{
+							if(values[i]?.Class.Name == "CardDefinition")
+							{
+								var cardId = values[i]["<Name>k__BackingField"];
+								var premium = values[i]["<Premium>k__BackingField"];
+								collection.FavoriteHeroes[(int)keys[i]["value__"]] = new Card(cardId, 1, premium > 0);
+							}
+						}
+					}
+				}
+			}
+
+			collection.Dust += Mirror.Root?["CraftingManager"]["s_instance"]?["m_unCommitedArcaneDustAdjustments"] ?? 0;
+
+			return collection;
 		}
 
 		public static List<Deck> GetDecks() => TryGetInternal(() => InternalGetDecks().ToList());

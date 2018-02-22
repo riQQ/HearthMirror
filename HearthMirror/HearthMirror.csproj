@@ -67,6 +67,7 @@
     <Compile Include="Enums\Status.cs" />
     <Compile Include="Objects\AccountId.cs" />
     <Compile Include="Objects\BattleTag.cs" />
+    <Compile Include="Objects\Collection.cs" />
     <Compile Include="Objects\DungeonInfo.cs" />
     <Compile Include="Objects\GameServerInfo.cs" />
     <Compile Include="Objects\ArenaInfo.cs" />
