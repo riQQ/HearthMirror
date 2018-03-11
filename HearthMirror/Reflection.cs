@@ -476,7 +476,9 @@ namespace HearthMirror
 
 		private static BattleTag GetBattleTagInternal()
 		{
-			var bTag = Mirror.Root?["BnetPresenceMgr"]["s_instance"]["m_myPlayer"]["m_account"]["m_battleTag"];
+			var bTag = Mirror.Root?["BnetPresenceMgr"]["s_instance"]?["m_myPlayer"]?["m_account"]?["m_battleTag"];
+			if(bTag == null)
+				return null;
 			return new BattleTag
 			{
 				Name = bTag["m_name"],
