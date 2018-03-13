@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace HearthMirror.Mono
 {
 	internal class MonoClass
 	{
+		//Hack to prevent leak
+		private const int MAX_FIELDS_HACK = 1000;
+
 		private readonly uint _pClass;
 		private readonly ProcessView _view;
 
@@ -69,7 +73,7 @@ namespace HearthMirror.Mono
 
 		public MonoType ByvalArg => new MonoType(_view, _pClass + Offsets.MonoClass_byval_arg);
 
-		public int NumFields => _view.ReadInt(_pClass + Offsets.MonoClass_field_count);
+		public int NumFields => Math.Min(MAX_FIELDS_HACK, _view.ReadInt(_pClass + Offsets.MonoClass_field_count));
 
 		public MonoClassField[] Fields
 		{
