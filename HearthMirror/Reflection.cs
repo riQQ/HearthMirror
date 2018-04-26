@@ -588,18 +588,22 @@ namespace HearthMirror
 			return brawlInfo;
 		}
 
-		public static DungeonInfo GetDungeonInfo() => TryGetInternal(GetDungeonInfoInternal);
+		public static DungeonInfo[] GetDungeonInfo() => TryGetInternal(GetDungeonInfoInternal);
 
-		private static DungeonInfo GetDungeonInfoInternal()
+		private static DungeonInfo[] GetDungeonInfoInternal()
 		{
 			var dataMap = Mirror.Root?["GameSaveDataManager"]?["s_instance"]?["m_gameSaveDataMapByKey"];
 			if(dataMap == null)
 				return null;
-			var index = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_LOOT);
-			if(index == -1)
-				return null;
-			var subMap = dataMap["valueSlots"][index];
-			return new DungeonInfoParser(subMap);
+			var lootIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_LOOT);
+			var gilIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_GIL);
+			var data = dataMap["valueSlots"];
+			return new DungeonInfo[]
+			{
+				lootIndex == -1 ? null : new DungeonInfoParser(data[lootIndex]),
+				gilIndex == -1 ? null : new DungeonInfoParser(data[gilIndex])
+			};
+
 		}
 
 		internal static int GetKeyIndex(dynamic map, int key)
