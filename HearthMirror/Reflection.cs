@@ -600,8 +600,8 @@ namespace HearthMirror
 			var data = dataMap["valueSlots"];
 			return new DungeonInfo[]
 			{
-				lootIndex == -1 ? null : new DungeonInfoParser(data[lootIndex]),
-				gilIndex == -1 ? null : new DungeonInfoParser(data[gilIndex])
+				lootIndex == -1 ? null : new DungeonInfoParser(1004, data[lootIndex]),
+				gilIndex == -1 ? null : new DungeonInfoParser(1125, data[gilIndex])
 			};
 
 		}

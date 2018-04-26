@@ -40,6 +40,8 @@ namespace HearthMirror.Objects
 		public int PlayerChosenTreasure => _playerChosenTreasure;
 		public bool RunActive => _runActive;
 
+		public int CardSet { get; protected set; }
+
 		//protected Dictionary<int, int> _classBossWinos;
 		//protected Dictionary<int, int> _classRunWins;
 		//public Dictionary<int, int> ClassBossWinos => _classBossWinos;

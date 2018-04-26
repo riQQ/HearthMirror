@@ -10,8 +10,9 @@ namespace HearthMirror.Util
 	{
 		private readonly dynamic _map;
 
-		public DungeonInfoParser(dynamic map)
+		public DungeonInfoParser(int cardSet, dynamic map)
 		{
+			CardSet = cardSet;
 			_map = map;
 			GetValue(DUNGEON_CRAWL_BOSSES_DEFEATED, out _bossesDefeated);
 			GetValue(DUNGEON_CRAWL_DECK_CARD_LIST, out _dbfIds);
