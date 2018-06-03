@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Enums\GameSaveKeyId.cs" />
     <Compile Include="Enums\GameSaveKeySubkeyId.cs" />
+    <Compile Include="Native.cs" />
     <Compile Include="Objects\BrawlInfo.cs" />
     <Compile Include="Enums\BoxState.cs" />
     <Compile Include="Enums\Side.cs" />

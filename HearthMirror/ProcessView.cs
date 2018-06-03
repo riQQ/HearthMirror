@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -18,18 +19,56 @@ namespace HearthMirror
 
 		public ProcessView(Process proc)
 		{
-			_procHandle = proc.Handle;
-			var module = proc.Modules.OfType<ProcessModule>().FirstOrDefault(x => x.ModuleName == "mono.dll");
-			if(module == null)
+			_procHandle = Native.OpenProcess(proc, ProcessAccessFlags.QueryInformation | ProcessAccessFlags.VirtualMemoryRead);
+			if(_procHandle == IntPtr.Zero)
+				throw new Win32Exception(Marshal.GetLastWin32Error());
+
+			if(!GetFirstModule(proc.Id, "mono.dll", out var module))
 				return;
-			_moduleBase = module.BaseAddress.ToInt64();
-			_module = new byte[module.ModuleMemorySize];
+
+			_moduleBase = module.modBaseAddr.ToInt64();
+			_module = new byte[module.modBaseSize];
 			Valid = ReadBytes(_module, 0, _module.Length, _moduleBase) && LoadPeHeader();
 		}
 
 		public bool Valid { get; private set; }
 
 		internal void ClearCache() => _cache.Clear();
+
+		private bool GetFirstModule(int pid, string name, out ModuleEntry32 module)
+		{
+			module = new ModuleEntry32();
+			var moduleSnapshot = Native.CreateToolhelp32Snapshot(SnapshotFlags.Module, (uint)pid);
+			if(moduleSnapshot == IntPtr.Zero)
+			{
+				var win32Error = Marshal.GetLastWin32Error();
+				Debug.WriteLine("CreateToolhelp32Snapshot Error " + win32Error);
+				return false;
+			}
+
+			try
+			{
+				var mod = new ModuleEntry32 { dwSize = (uint)Marshal.SizeOf(typeof(ModuleEntry32)) };
+				if(!Native.Module32First(moduleSnapshot, ref mod))
+					return false;
+
+				do
+				{
+					if(mod.szModule == name)
+					{
+						module = mod;
+						return true;
+					}
+				}
+				while(Native.Module32Next(moduleSnapshot, ref mod));
+
+				return false;
+			}
+			finally
+			{
+				Native.CloseHandle(moduleSnapshot);
+			}
+		}
 
 		private byte[] ReadBytes(int size, long addr, int offset = 0)
 		{
