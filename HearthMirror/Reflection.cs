@@ -56,7 +56,9 @@ namespace HearthMirror
 				int size = collectibleCards["_size"];
 				for(var i = 0; i < size; i++)
 				{
-					string cardId = items[i]["m_EntityDef"]["m_cardId"];
+					string cardId = items[i]["m_EntityDef"]["m_cardIdInternal"];
+					if(string.IsNullOrEmpty(cardId))
+						continue;
 					int count = items[i]["<OwnedCount>k__BackingField"];
 					int premium = items[i]["m_PremiumType"];
 					collection.Cards.Add(new Card(cardId, count, premium > 0));
@@ -338,7 +340,7 @@ namespace HearthMirror
 			for(var i = 0; i < size; i++)
 			{
 				if(choices[i] != null)
-					yield return new Card(choices[i]["m_actor"]["m_entityDef"]["m_cardId"], 1, false);
+					yield return new Card(choices[i]["m_actor"]["m_entityDef"]["m_cardIdInternal"], 1, false);
 			}
 		}
 

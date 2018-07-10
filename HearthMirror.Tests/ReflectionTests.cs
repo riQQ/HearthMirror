@@ -16,6 +16,8 @@ namespace HearthMirror.Tests
 			Assert.IsTrue(decks.Count > 0, "at least one deck was found");
 			Assert.IsTrue(decks.TrueForAll(x => !string.IsNullOrEmpty(x.Name)), "all decks have a name");
 			Assert.IsTrue(decks.TrueForAll(x => x.Id > 0), "all decks have an ID");
+			foreach(var deck in decks)
+				Assert.IsTrue(deck.Cards.TrueForAll(x => !string.IsNullOrEmpty(x.Id)), "all cards in a deck must have a card ID");
 
 			var selectedDeck = Reflection.GetSelectedDeckInMenu();
 			Assert.IsTrue(selectedDeck > 0, "selected deck has an ID");
