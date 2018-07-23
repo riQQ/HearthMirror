@@ -403,8 +403,11 @@ namespace HearthMirror
 
 		public static bool IsFriendlyChallengeDialogVisible()
 		{
-			var dialog = TryGetInternal(() => Mirror.Root?["DialogManager"]["s_instance"]["m_currentDialog"]);
-			return dialog?.Class.Name == "FriendlyChallengeDialog" && dialog?["m_shown"];
+			return TryGetInternal(() =>
+			{
+				var dialog = Mirror.Root?["DialogManager"]["s_instance"]["m_currentDialog"];
+				return dialog?.Class.Name == "FriendlyChallengeDialog" && dialog["m_shown"];
+			});
 		}
 
 		public static bool IsFriendsListVisible() => TryGetInternal(() => Mirror.Root?["ChatMgr"]?["s_instance"]?["m_friendListFrame"]) != null;
