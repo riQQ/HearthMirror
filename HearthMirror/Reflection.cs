@@ -406,6 +406,8 @@ namespace HearthMirror
 			return TryGetInternal(() =>
 			{
 				var dialog = Mirror.Root?["DialogManager"]["s_instance"]["m_currentDialog"];
+				if(dialog == null)
+					return false;
 				return dialog?.Class.Name == "FriendlyChallengeDialog" && dialog["m_shown"];
 			});
 		}
