@@ -259,7 +259,7 @@ namespace HearthMirror
 				if(brawlGameTypes.Contains(matchInfo.GameType))
 				{
 					var mission = GetCurrentBrawlMission();
-					matchInfo.BrawlSeasonId = mission?["tavernBrawlSpec"]?["<GameContentSeason>k__BackingField"]?["<SeasonId>k__BackingField"];
+					matchInfo.BrawlSeasonId = mission?["<tavernBrawlSpec>k__BackingField"]?["<GameContentSeason>k__BackingField"]?["<SeasonId>k__BackingField"];
 				}
 			}
 			if(netCacheValues != null)
