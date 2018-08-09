@@ -21,6 +21,15 @@ namespace HearthMirror.Tests
 
 			var selectedDeck = Reflection.GetSelectedDeckInMenu();
 			Assert.IsTrue(selectedDeck > 0, "selected deck has an ID");
+
+			var templateDecks = Reflection.GetTemplateDecks();
+			Assert.AreEqual(3 * 9, templateDecks.Count);
+			Assert.IsTrue(templateDecks.TrueForAll(x => !string.IsNullOrEmpty(x.Title)), "all template decks have a title");
+			Assert.IsTrue(templateDecks.TrueForAll(x => x.DeckId > 0), "all templdate decks have an ID");
+			Assert.IsTrue(templateDecks.TrueForAll(x => x.Class > 0), "all templdate decks have an class");
+			Assert.IsTrue(templateDecks.TrueForAll(x => x.Cards.Sum(c => c.Count) == 30), "all templdate have 30 cards");
+			foreach(var deck in templateDecks)
+				Assert.IsTrue(deck.Cards.TrueForAll(x => !string.IsNullOrEmpty(x.Id)), "all cards in a template deck must have a card ID");
 		}
 
 		[TestMethod]

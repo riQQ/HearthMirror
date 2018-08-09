@@ -79,6 +79,7 @@
     <Compile Include="Objects\MedalInfo.cs" />
     <Compile Include="Objects\MedalInfoData.cs" />
     <Compile Include="Objects\SetFilterItem.cs" />
+    <Compile Include="Objects\TemplateDeck.cs" />
     <Compile Include="Reflection.cs" />
     <Compile Include="Mirror.cs" />
     <Compile Include="Mono\MonoClass.cs" />

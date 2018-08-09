@@ -126,6 +126,29 @@ namespace HearthMirror
 			}
 		}
 
+		public static List<TemplateDeck> GetTemplateDecks() => TryGetInternal(() => InternalGetTemplateDecks().ToList());
+
+		private static IEnumerable<TemplateDeck> InternalGetTemplateDecks()
+		{
+			var values = Mirror.Root?["CollectionManager"]["s_instance"]?["m_templateDecks"]?["valueSlots"];
+			if(values == null)
+				yield break; 
+			foreach(var val in values)
+			{
+				if(val == null)
+					continue;
+				var decks = val["_items"];
+				for(var i = 0; i < val["_size"]; i++)
+				{
+					if(decks[i].Class.Name != "TemplateDeck")
+						continue;
+					var deck = GetTemplateDeck(decks[i]);
+					if(deck != null)
+						yield return deck;
+				}
+			}
+		}
+
 		public static GameServerInfo GetServerInfo() => TryGetInternal(InternalGetServerInfo);
 		private static GameServerInfo InternalGetServerInfo()
 		{
@@ -342,6 +365,27 @@ namespace HearthMirror
 				if(choices[i] != null)
 					yield return new Card(choices[i]["m_actor"]["m_entityDef"]["m_cardIdInternal"], 1, false);
 			}
+		}
+
+		private static TemplateDeck GetTemplateDeck(dynamic deckObj)
+		{
+			if(deckObj == null)
+				return null;
+			var deck = new TemplateDeck
+			{
+				DeckId = deckObj["m_id"],
+				Class = deckObj["m_class"],
+				SortOrder = deckObj["m_sortOrder"],
+				Title = deckObj["m_title"],
+			};
+			var cards = deckObj["m_cardIds"];
+			for(var i = 0; i < cards["count"]; i++)
+			{
+				var cardId = cards["keySlots"][i];
+				int count = cards["valueSlots"][i];
+				deck.Cards.Add(new Card(cardId, count, false));
+			}
+			return deck;
 		}
 
 		private static Deck GetDeck(dynamic deckObj)
@@ -645,7 +689,7 @@ namespace HearthMirror
 			var data = new[]
 			{
 				"NetCache", "GameState", "Log", "TavernBrawlManager", "TavernBrawlDisplay", "BnetPresenceMgr", "DraftManager",
-				"PackOpening", "CollectionManagerDisplay", "GameMgr", "Network", "DraftManager", "DraftDisplay"
+				"PackOpening", "CollectionManagerDisplay", "GameMgr", "Network", "DraftManager", "DraftDisplay", "CollectionManager"
 			}.Select(x => Mirror.Root?[x]?["s_instance"]).ToList();
 			System.Diagnostics.Debugger.Break();
 		}
