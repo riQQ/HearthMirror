@@ -139,6 +139,8 @@ namespace HearthMirror.Mono
 							else
 								result[i] = ReadValue(elClass.ByvalArg.Type, ea);
 						}
+						else if(elClass.ByvalArg.Type == MonoTypeEnum.String)
+							result[i] = ReadValue(elClass.ByvalArg.Type, ea);
 						else
 						{
 							var po = _view.ReadUint(ea);
