@@ -12,6 +12,8 @@ namespace HearthMirror
 		private static readonly Lazy<Mirror> LazyMirror = new Lazy<Mirror>(() => new Mirror {ImageName = "Hearthstone"});
 		private static Mirror Mirror => LazyMirror.Value;
 
+		public static event Action<Exception> Exception;
+
 		private static T TryGetInternal<T>(Func<T> action, bool clearCache = true)
 		{
 			try
@@ -34,6 +36,7 @@ namespace HearthMirror
 				}
 				catch(Exception e2)
 				{
+					Exception?.Invoke(e2);
 					return default(T);
 				}
 			}
