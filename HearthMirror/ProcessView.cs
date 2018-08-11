@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace HearthMirror
 {
@@ -11,6 +12,7 @@ namespace HearthMirror
 	{
 		private const int PageSize = 4096;
 		private const int PageCount = 1024;
+		private const int ErrorBadLength = 0x0000018;
 		private readonly Cache _cache = new Cache(PageCount);
 		private readonly byte[] _module;
 		private readonly long _moduleBase;
@@ -38,13 +40,24 @@ namespace HearthMirror
 		private bool GetFirstModule(int pid, string name, out ModuleEntry32 module)
 		{
 			module = new ModuleEntry32();
-			var moduleSnapshot = Native.CreateToolhelp32Snapshot(SnapshotFlags.Module, (uint)pid);
-			if(moduleSnapshot == IntPtr.Zero)
+			var moduleSnapshot = IntPtr.Zero;
+			for(int i = 0; i < 50; i++)
 			{
+				moduleSnapshot = Native.CreateToolhelp32Snapshot(SnapshotFlags.Module, (uint)pid);
+
+				if(moduleSnapshot != IntPtr.Zero)
+					break;
+
+				// Ensure that the target process was not started in a suspended state, and try calling the function again. If the function fails with ERROR_BAD_LENGTH when called with TH32CS_SNAPMODULE or TH32CS_SNAPMODULE32, call the function again until it succeeds.
 				var win32Error = Marshal.GetLastWin32Error();
-				Debug.WriteLine("CreateToolhelp32Snapshot Error " + win32Error);
-				return false;
+				if(win32Error != ErrorBadLength)
+					throw new Win32Exception(win32Error);
+
+				Thread.Sleep(1);
 			}
+
+			if(moduleSnapshot == IntPtr.Zero)
+				throw new Exception("Couldn't read modules of Hearthstone process");
 
 			try
 			{
