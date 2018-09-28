@@ -25,8 +25,7 @@ namespace HearthMirror
 			if(_procHandle == IntPtr.Zero)
 				throw new Win32Exception(Marshal.GetLastWin32Error());
 
-			if(!GetFirstModule(proc.Id, "mono.dll", out var module))
-				return;
+			GetFirstModule(proc.Id, "mono.dll", out var module);
 
 			_moduleBase = module.modBaseAddr.ToInt64();
 			_module = new byte[module.modBaseSize];
@@ -37,7 +36,7 @@ namespace HearthMirror
 
 		internal void ClearCache() => _cache.Clear();
 
-		private bool GetFirstModule(int pid, string name, out ModuleEntry32 module)
+		private void GetFirstModule(int pid, string name, out ModuleEntry32 module)
 		{
 			module = new ModuleEntry32();
 			var moduleSnapshot = IntPtr.Zero;
@@ -63,19 +62,19 @@ namespace HearthMirror
 			{
 				var mod = new ModuleEntry32 { dwSize = (uint)Marshal.SizeOf(typeof(ModuleEntry32)) };
 				if(!Native.Module32First(moduleSnapshot, ref mod))
-					return false;
+					throw new Win32Exception(Marshal.GetLastWin32Error());
 
 				do
 				{
 					if(mod.szModule == name)
 					{
 						module = mod;
-						return true;
+						return;
 					}
 				}
 				while(Native.Module32Next(moduleSnapshot, ref mod));
 
-				return false;
+				throw new Exception($"Couldn't find {name} for process with pid {pid}");
 			}
 			finally
 			{
