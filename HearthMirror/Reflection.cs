@@ -223,6 +223,43 @@ namespace HearthMirror
 			};
 		}
 
+		private static dynamic GetLeagueRankRecord(int leagueId, int starLevel)
+		{
+			var rankMgr = Mirror.Root?["RankMgr"]["s_instance"];
+			if(rankMgr == null)
+				return null;
+			var leagueMap = rankMgr["m_rankConfigByLeagueAndStarLevel"];
+			if(leagueMap == null)
+				return null;
+			var leagueKeys = leagueMap["keySlots"];
+			var leagueValues = leagueMap["valueSlots"];
+			for(var i = 0; i < leagueKeys.Length; i++)
+			{
+				if(leagueKeys[i] != leagueId)
+					continue;
+				var starLevelMap = leagueValues[i];
+				if(starLevelMap == null)
+					return null;
+				var starLevelKeys = starLevelMap["keySlots"];
+				var starLevelValues = starLevelMap["valueSlots"];
+				for(var j = 0; j < starLevelKeys.Length; j++)
+				{
+					if(starLevelKeys[j] != starLevel)
+						continue;
+					return starLevelValues[j];
+				}
+			}
+			return null;
+		}
+
+		private static int GetRankValue(dynamic medalInfo)
+		{
+			var leagueId = medalInfo["leagueId"];
+			var starLevel = medalInfo["starLevel"];
+			var leagueRankRecord = GetLeagueRankRecord(leagueId, starLevel);
+			return int.Parse(leagueRankRecord["m_MedalText"]["m_locValues"]["_items"][0]);
+		}
+
 		public static MatchInfo GetMatchInfo() => TryGetInternal(GetMatchInfoInternal);
 		private static MatchInfo GetMatchInfoInternal()
 		{
@@ -241,9 +278,9 @@ namespace HearthMirror
 					var sMedalInfo = medalInfo?["m_currMedalInfo"];
 					var wMedalInfo = medalInfo?["m_currWildMedalInfo"];
 					var name = players[i]["m_name"];
-					var sRank = sMedalInfo?["rank"] ?? 0;
+					var sRank = GetRankValue(sMedalInfo);
 					var sLegendRank = sMedalInfo?["legendIndex"] ?? 0;
-					var wRank = wMedalInfo?["rank"] ?? 0;
+					var wRank = GetRankValue(wMedalInfo);
 					var wLegendRank = wMedalInfo?["legendIndex"] ?? 0;
 					var cardBack = players[i]["m_cardBackId"];
 					var id = playerIds[i];
@@ -692,7 +729,8 @@ namespace HearthMirror
 			var data = new[]
 			{
 				"NetCache", "GameState", "Log", "TavernBrawlManager", "TavernBrawlDisplay", "BnetPresenceMgr", "DraftManager",
-				"PackOpening", "CollectionManagerDisplay", "GameMgr", "Network", "DraftManager", "DraftDisplay", "CollectionManager"
+				"PackOpening", "CollectionManagerDisplay", "GameMgr", "Network", "DraftManager", "DraftDisplay", "CollectionManager",
+				"RankMgr"
 			}.Select(x => Mirror.Root?[x]?["s_instance"]).ToList();
 			System.Diagnostics.Debugger.Break();
 		}
