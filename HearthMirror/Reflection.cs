@@ -259,8 +259,14 @@ namespace HearthMirror
 			var leagueRankRecord = GetLeagueRankRecord(leagueId, starLevel);
 			if(leagueRankRecord == null)
 				return 0;
-			if(int.TryParse(leagueRankRecord["m_MedalText"]["m_locValues"]["_items"][0], out int rank))
-				return rank;
+			var locValues = leagueRankRecord["m_MedalText"]["m_locValues"]["_items"];
+			foreach(var value in locValues)
+			{
+				if(value == null)
+					continue;
+				if(int.TryParse(value, out int rank))
+					return rank;
+			}
 			return 0;
 		}
 
