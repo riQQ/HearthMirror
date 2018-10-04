@@ -257,7 +257,11 @@ namespace HearthMirror
 			var leagueId = medalInfo["leagueId"];
 			var starLevel = medalInfo["starLevel"];
 			var leagueRankRecord = GetLeagueRankRecord(leagueId, starLevel);
-			return int.Parse(leagueRankRecord["m_MedalText"]["m_locValues"]["_items"][0]);
+			if(leagueRankRecord == null)
+				return 0;
+			if(int.TryParse(leagueRankRecord["m_MedalText"]["m_locValues"]["_items"][0], out int rank))
+				return rank;
+			return 0;
 		}
 
 		public static MatchInfo GetMatchInfo() => TryGetInternal(GetMatchInfoInternal);
@@ -278,9 +282,9 @@ namespace HearthMirror
 					var sMedalInfo = medalInfo?["m_currMedalInfo"];
 					var wMedalInfo = medalInfo?["m_currWildMedalInfo"];
 					var name = players[i]["m_name"];
-					var sRank = GetRankValue(sMedalInfo);
+					var sRank = sMedalInfo != null ? GetRankValue(sMedalInfo) : 0;
 					var sLegendRank = sMedalInfo?["legendIndex"] ?? 0;
-					var wRank = GetRankValue(wMedalInfo);
+					var wRank = wMedalInfo != null ? GetRankValue(wMedalInfo) : 0;
 					var wLegendRank = wMedalInfo?["legendIndex"] ?? 0;
 					var cardBack = players[i]["m_cardBackId"];
 					var id = playerIds[i];
