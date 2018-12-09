@@ -698,11 +698,13 @@ namespace HearthMirror
 				return null;
 			var lootIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_LOOT);
 			var gilIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_GIL);
+			var trlIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_TRL);
 			var data = dataMap["valueSlots"];
 			return new DungeonInfo[]
 			{
 				lootIndex == -1 ? null : new DungeonInfoParser(1004, data[lootIndex]),
-				gilIndex == -1 ? null : new DungeonInfoParser(1125, data[gilIndex])
+				gilIndex == -1 ? null : new DungeonInfoParser(1125, data[gilIndex]),
+				trlIndex == -1 ? null : new DungeonInfoParser(1129, data[trlIndex])
 			};
 
 		}

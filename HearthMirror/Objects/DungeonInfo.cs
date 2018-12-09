@@ -21,6 +21,9 @@ namespace HearthMirror.Objects
 		protected int _playerChosenLoot;
 		protected int _playerChosenTreasure;
 		protected bool _runActive;
+		protected int _heroClass;
+		protected List<int> _shrines;
+		protected int _playerChosenShrine;
 
 		public List<int> BossesDefeated => _bossesDefeated;
 		public int BossesLostTo => _bossesLostTo;
@@ -39,6 +42,9 @@ namespace HearthMirror.Objects
 		public int PlayerChosenLoot => _playerChosenLoot;
 		public int PlayerChosenTreasure => _playerChosenTreasure;
 		public bool RunActive => _runActive;
+		public int HeroClass => _heroClass;
+		public List<int> Shrines => _shrines;
+		public int PlayerChosenShrine => _playerChosenShrine;
 
 		public int CardSet { get; protected set; }
 
