@@ -88,7 +88,7 @@ namespace HearthMirror
 							if(!collection.CardBacks.Contains(slots[i])) 
 								collection.CardBacks.Add(slots[i]);
 						}
-						collection.FavoriteCardBack = (int)val["<DefaultCardBack>k__BackingField"];
+						collection.FavoriteCardBack = (int)val["<FavoriteCardBack>k__BackingField"];
 					}
 					else if(val.Class.Name == "NetCacheFavoriteHeroes")
 					{
