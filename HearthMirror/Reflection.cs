@@ -699,14 +699,17 @@ namespace HearthMirror
 			var lootIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_LOOT);
 			var gilIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_GIL);
 			var trlIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_TRL);
+			var dalaranIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_DALARAN);
+			var dalaranHeroicIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_DALARAN_HEROIC);
 			var data = dataMap["valueSlots"];
 			return new DungeonInfo[]
 			{
 				lootIndex == -1 ? null : new DungeonInfoParser(1004, data[lootIndex]),
 				gilIndex == -1 ? null : new DungeonInfoParser(1125, data[gilIndex]),
-				trlIndex == -1 ? null : new DungeonInfoParser(1129, data[trlIndex])
+				trlIndex == -1 ? null : new DungeonInfoParser(1129, data[trlIndex]),
+				dalaranIndex == -1 ? null : new DungeonInfoParser(1130, data[dalaranIndex]),
+				dalaranHeroicIndex == -1 ? null : new DungeonInfoParser(1130, data[dalaranHeroicIndex])
 			};
-
 		}
 
 		internal static int GetKeyIndex(dynamic map, int key)
@@ -718,6 +721,57 @@ namespace HearthMirror
 					return i;
 			}
 			return -1;
+		}
+
+		public static List<int> GetDungeonDeck(int deckDbfRecord) => TryGetInternal(() => GetDungeonDeckInternal(deckDbfRecord));
+
+		private static List<int> GetDungeonDeckInternal(int deckDbfRecord)
+		{
+			var topCard = GetDbfDeckTopCard(deckDbfRecord);
+			if(topCard == null)
+				return null;
+			var cards = new List<int>();
+
+			dynamic cardDbfRecord = GetDeckCardDbfRecord((int)topCard);
+			while (cardDbfRecord != null)
+			{
+				cards.Add(cardDbfRecord["m_CardId"]);
+				var next = cardDbfRecord["m_NextCard"];
+				cardDbfRecord = next == 0 ? null : GetDeckCardDbfRecord(next);
+			}
+			return cards;
+		}
+
+
+		private static int? GetDbfDeckTopCard(int deckDbfRecord)
+		{
+			var decks = Mirror.Root?["GameDbf"]?["Deck"]?["m_records"];
+			if(decks == null)
+				return null;
+			var items = decks["_items"];
+			for(var i = 0; i < items.Length; i++)
+			{
+				var id = items[i]["m_ID"];
+				if(id == deckDbfRecord)
+					return items[i]["m_TopCardId"];
+			}
+			return null;
+		}
+
+
+		private static dynamic GetDeckCardDbfRecord(int cardId)
+		{
+			var cards = Mirror.Root?["GameDbf"]?["DeckCard"]?["m_records"];
+			if(cards == null)
+				return null;
+			var items = cards["_items"];
+			for(var i = 0; i < items.Length; i++)
+			{
+				var id = items[i]["m_ID"];
+				if(id == cardId)
+					return items[i];
+			}
+			return null;
 		}
 
 		public static bool IsLogEnabled(string name) => TryGetInternal(() => IsLogEnabledInternal(name));
@@ -742,7 +796,7 @@ namespace HearthMirror
 			{
 				"NetCache", "GameState", "Log", "TavernBrawlManager", "TavernBrawlDisplay", "BnetPresenceMgr", "DraftManager",
 				"PackOpening", "CollectionManagerDisplay", "GameMgr", "Network", "DraftManager", "DraftDisplay", "CollectionManager",
-				"RankMgr"
+				"RankMgr", "GameSaveDataManager"
 			}.Select(x => Mirror.Root?[x]?["s_instance"]).ToList();
 			System.Diagnostics.Debugger.Break();
 		}

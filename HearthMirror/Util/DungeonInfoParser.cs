@@ -35,6 +35,12 @@ namespace HearthMirror.Util
 			GetValue(DUNGEON_CRAWL_SELECTED_HERO_CLASS, out _heroClass);
 			GetValue(DUNGEON_CRAWL_PLAYER_CHOSEN_SHRINE, out _playerChosenShrine);
 			GetValue(DUNGEON_CRAWL_SHRINE_OPTIONS, out _shrines);
+
+			// Dalaran
+			GetValue(DUNGEON_CRAWL_PLAYER_SELECTED_DECK, out _selectedDeckId);
+			if (SelectedDeckId != 0) {
+				SelectedDeck = Reflection.GetDungeonDeck(SelectedDeckId);
+			}
 		}
 
 		private bool GetValue(GameSaveKeySubkeyId key, out int value)
