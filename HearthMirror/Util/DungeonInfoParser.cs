@@ -33,6 +33,7 @@ namespace HearthMirror.Util
 			GetValue(DUNGEON_CRAWL_HERO_HEALTH, out _heroHealth);
 			GetValue(DUNGEON_CRAWL_CARDS_ADDED_TO_DECK_MAP, out _cardsAddedToDeck);
 			GetValue(DUNGEON_CRAWL_SELECTED_HERO_CLASS, out _heroClass);
+			GetValue(DUNGEON_CRAWL_PLAYER_SELECTED_HERO_POWER, out _selectedHeroPower);
 			GetValue(DUNGEON_CRAWL_PLAYER_CHOSEN_SHRINE, out _playerChosenShrine);
 			GetValue(DUNGEON_CRAWL_SHRINE_OPTIONS, out _shrines);
 
