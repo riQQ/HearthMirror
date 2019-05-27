@@ -98,6 +98,7 @@
     <Compile Include="Enums\SceneMode.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Enums\UI_WINDOW.cs" />
+    <Compile Include="Util\DeckCache.cs" />
     <Compile Include="Util\DungeonInfoParser.cs" />
     <Compile Include="Util\RewardDataParser.cs" />
   </ItemGroup>

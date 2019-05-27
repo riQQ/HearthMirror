@@ -39,9 +39,6 @@ namespace HearthMirror.Util
 
 			// Dalaran
 			GetValue(DUNGEON_CRAWL_PLAYER_SELECTED_DECK, out _selectedDeckId);
-			if (SelectedDeckId != 0) {
-				SelectedDeck = Reflection.GetDungeonDeck(SelectedDeckId);
-			}
 		}
 
 		private bool GetValue(GameSaveKeySubkeyId key, out int value)

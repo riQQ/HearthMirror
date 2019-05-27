@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using HearthMirror.Util;
+using System.Collections.Generic;
 
 namespace HearthMirror.Objects
 {
@@ -51,7 +52,7 @@ namespace HearthMirror.Objects
 		public int SelectedHeroPower => _selectedHeroPower;
 
 		public int CardSet { get; protected set; }
-		public List<int> SelectedDeck { get; protected set; }
+		public List<int> SelectedDeck => DeckCache.Get(_selectedDeckId);
 
 		//protected Dictionary<int, int> _classBossWinos;
 		//protected Dictionary<int, int> _classRunWins;
