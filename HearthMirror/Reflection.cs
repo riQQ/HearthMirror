@@ -735,8 +735,8 @@ namespace HearthMirror
 			dynamic cardDbfRecord = GetDeckCardDbfRecord((int)topCard);
 			while (cardDbfRecord != null)
 			{
-				cards.Add(cardDbfRecord["m_CardId"]);
-				var next = cardDbfRecord["m_NextCard"];
+				cards.Add(cardDbfRecord["m_cardId"]);
+				var next = cardDbfRecord["m_nextCardId"];
 				cardDbfRecord = next == 0 ? null : GetDeckCardDbfRecord(next);
 			}
 			return cards;
@@ -753,7 +753,7 @@ namespace HearthMirror
 			{
 				var id = items[i]["m_ID"];
 				if(id == deckDbfRecord)
-					return items[i]["m_TopCardId"];
+					return items[i]["m_topCardId"];
 			}
 			return null;
 		}
