@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\DeckDbfRecord.cs" />
     <Compile Include="Enums\GameSaveKeyId.cs" />
     <Compile Include="Enums\GameSaveKeySubkeyId.cs" />
     <Compile Include="Native.cs" />

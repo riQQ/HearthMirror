@@ -52,7 +52,7 @@ namespace HearthMirror.Objects
 		public int SelectedHeroPower => _selectedHeroPower;
 
 		public int CardSet { get; protected set; }
-		public List<int> SelectedDeck => DeckCache.Get(_selectedDeckId);
+		public List<int> SelectedDeck => DeckCache.GetDungeonDeck(_selectedDeckId);
 
 		//protected Dictionary<int, int> _classBossWinos;
 		//protected Dictionary<int, int> _classRunWins;

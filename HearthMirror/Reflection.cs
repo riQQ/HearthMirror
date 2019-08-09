@@ -133,22 +133,16 @@ namespace HearthMirror
 
 		private static IEnumerable<TemplateDeck> InternalGetTemplateDecks()
 		{
-			var values = Mirror.Root?["CollectionManager"]["s_instance"]?["m_templateDecks"]?["valueSlots"];
-			if(values == null)
+			var templateDecks = Mirror.Root?["GameDbf"]?["DeckTemplate"]?["m_records"];
+			if(templateDecks == null)
 				yield break; 
-			foreach(var val in values)
+			foreach(var template in templateDecks["_items"])
 			{
-				if(val == null)
+				if(template == null)
 					continue;
-				var decks = val["_items"];
-				for(var i = 0; i < val["_size"]; i++)
-				{
-					if(decks[i].Class.Name != "TemplateDeck")
-						continue;
-					var deck = GetTemplateDeck(decks[i]);
-					if(deck != null)
-						yield return deck;
-				}
+				TemplateDeck deck = GetTemplateDeck(template);
+				if(deck != null && string.IsNullOrEmpty(deck.Event))
+					yield return deck;
 			}
 		}
 
@@ -421,21 +415,18 @@ namespace HearthMirror
 		{
 			if(deckObj == null)
 				return null;
-			var deck = new TemplateDeck
+			var deckId = deckObj["m_deckId"];
+			DeckDbfRecord dbfDeck = GetDbfDeckTopCard(deckId);
+			if (dbfDeck == null)
+				return null;
+			return new TemplateDeck(dbfDeck.TopCardId)
 			{
-				DeckId = deckObj["m_id"],
-				Class = deckObj["m_class"],
+				DeckId = deckId,
+				Class = deckObj["m_classId"],
 				SortOrder = deckObj["m_sortOrder"],
-				Title = deckObj["m_title"],
+				Title = dbfDeck.Name,
+				Event = deckObj["m_event"],
 			};
-			var cards = deckObj["m_cardIds"];
-			for(var i = 0; i < cards["count"]; i++)
-			{
-				var cardId = cards["keySlots"][i];
-				int count = cards["valueSlots"][i];
-				deck.Cards.Add(new Card(cardId, count, false));
-			}
-			return deck;
 		}
 
 		private static Deck GetDeck(dynamic deckObj)
@@ -727,12 +718,16 @@ namespace HearthMirror
 
 		private static List<int> GetDungeonDeckInternal(int deckDbfRecord)
 		{
-			var topCard = GetDbfDeckTopCard(deckDbfRecord);
-			if(topCard == null)
+			var deck = GetDbfDeckTopCard(deckDbfRecord);
+			if(deck == null)
 				return null;
-			var cards = new List<int>();
+			return GetDbfDeckCards(deck.TopCardId);
+		}
 
-			dynamic cardDbfRecord = GetDeckCardDbfRecord((int)topCard);
+		public static List<int> GetDbfDeckCards(int topCardId)
+		{
+			var cards = new List<int>();
+			dynamic cardDbfRecord = GetDeckCardDbfRecord(topCardId);
 			while (cardDbfRecord != null)
 			{
 				cards.Add(cardDbfRecord["m_cardId"]);
@@ -740,10 +735,10 @@ namespace HearthMirror
 				cardDbfRecord = next == 0 ? null : GetDeckCardDbfRecord(next);
 			}
 			return cards;
+
 		}
 
-
-		private static int? GetDbfDeckTopCard(int deckDbfRecord)
+		private static DeckDbfRecord GetDbfDeckTopCard(int deckDbfRecord)
 		{
 			var decks = Mirror.Root?["GameDbf"]?["Deck"]?["m_records"];
 			if(decks == null)
@@ -753,11 +748,14 @@ namespace HearthMirror
 			{
 				var id = items[i]["m_ID"];
 				if(id == deckDbfRecord)
-					return items[i]["m_topCardId"];
+					return new DeckDbfRecord()
+					{
+						TopCardId = items[i]["m_topCardId"],
+						Name = items[i]["m_name"]["m_locValues"]["_items"][1],
+					};
 			}
 			return null;
 		}
-
 
 		private static dynamic GetDeckCardDbfRecord(int cardId)
 		{
