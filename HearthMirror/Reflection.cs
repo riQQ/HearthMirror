@@ -692,6 +692,8 @@ namespace HearthMirror
 			var trlIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_TRL);
 			var dalaranIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_DALARAN);
 			var dalaranHeroicIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_DALARAN_HEROIC);
+			var uldumIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_SERVER_ULDUM);
+			var uldumHeroicIndex = GetKeyIndex(dataMap, (int)GameSaveKeyId.ADVENTURE_DATA_SERVER_ULDUM_HEROIC);
 			var data = dataMap["valueSlots"];
 			return new DungeonInfo[]
 			{
@@ -699,7 +701,9 @@ namespace HearthMirror
 				gilIndex == -1 ? null : new DungeonInfoParser(1125, data[gilIndex]),
 				trlIndex == -1 ? null : new DungeonInfoParser(1129, data[trlIndex]),
 				dalaranIndex == -1 ? null : new DungeonInfoParser(1130, data[dalaranIndex]),
-				dalaranHeroicIndex == -1 ? null : new DungeonInfoParser(1130, data[dalaranHeroicIndex])
+				dalaranHeroicIndex == -1 ? null : new DungeonInfoParser(1130, data[dalaranHeroicIndex]),
+				uldumIndex == -1 ? null : new DungeonInfoParser(1158, data[uldumIndex]),
+				uldumHeroicIndex == -1 ? null : new DungeonInfoParser(1158, data[uldumHeroicIndex])
 			};
 		}
 
@@ -768,6 +772,21 @@ namespace HearthMirror
 				var id = items[i]["m_ID"];
 				if(id == cardId)
 					return items[i];
+			}
+			return null;
+		}
+
+		public static string GetCardIdFromCardDbId(int dbId)
+		{
+			var cards = Mirror.Root?["GameDbf"]?["Card"]?["m_records"];
+			if (cards == null)
+				return null;
+			var items = cards["_items"];
+			for (var i = 0; i < items.Length; i++)
+			{
+				var id = items[i]["m_ID"];
+				if (id == dbId)
+					return items[i]["m_noteMiniGuid"];
 			}
 			return null;
 		}

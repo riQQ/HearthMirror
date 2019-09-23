@@ -36,6 +36,7 @@ namespace HearthMirror.Util
 			GetValue(DUNGEON_CRAWL_PLAYER_SELECTED_HERO_POWER, out _selectedHeroPower);
 			GetValue(DUNGEON_CRAWL_PLAYER_CHOSEN_SHRINE, out _playerChosenShrine);
 			GetValue(DUNGEON_CRAWL_SHRINE_OPTIONS, out _shrines);
+			GetValue(DUNGEON_CRAWL_PLAYER_SELECTED_LOADOUT_TREASURE_ID, out _selectedLoadoutTreasureDbId);
 
 			// Dalaran
 			GetValue(DUNGEON_CRAWL_PLAYER_SELECTED_DECK, out _selectedDeckId);

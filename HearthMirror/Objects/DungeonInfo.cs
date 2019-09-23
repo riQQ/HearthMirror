@@ -27,6 +27,7 @@ namespace HearthMirror.Objects
 		protected List<int> _shrines;
 		protected int _playerChosenShrine;
 		protected int _selectedDeckId;
+		protected int _selectedLoadoutTreasureDbId;
 
 		public List<int> BossesDefeated => _bossesDefeated;
 		public int BossesLostTo => _bossesLostTo;
@@ -50,9 +51,11 @@ namespace HearthMirror.Objects
 		public int PlayerChosenShrine => _playerChosenShrine;
 		public int SelectedDeckId => _selectedDeckId;
 		public int SelectedHeroPower => _selectedHeroPower;
+		public int SelectedLoadoutTreasureDbId => _selectedLoadoutTreasureDbId;
 
 		public int CardSet { get; protected set; }
 		public List<int> SelectedDeck => DeckCache.GetDungeonDeck(_selectedDeckId);
+		public string LoadoutCardId => _selectedLoadoutTreasureDbId > 0 ? Reflection.GetCardIdFromCardDbId(_selectedLoadoutTreasureDbId) : null;
 
 		//protected Dictionary<int, int> _classBossWinos;
 		//protected Dictionary<int, int> _classRunWins;
