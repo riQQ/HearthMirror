@@ -776,7 +776,9 @@ namespace HearthMirror
 			return null;
 		}
 
-		public static string GetCardIdFromCardDbId(int dbId)
+		public static string GetCardIdFromCardDbId(int dbId) => TryGetInternal(() => GetCardIdFromCardDbIdInternal(dbId));
+
+		private static string GetCardIdFromCardDbIdInternal(int dbId)
 		{
 			var cards = Mirror.Root?["GameDbf"]?["Card"]?["m_records"];
 			if (cards == null)
