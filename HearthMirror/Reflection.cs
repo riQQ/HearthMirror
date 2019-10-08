@@ -397,7 +397,9 @@ namespace HearthMirror
 
 		private static ArenaInfo GetArenaDeckInternal()
 		{
-			var draftManager = Mirror.Root?["DraftManager"]["s_instance"];
+			var draftManager = GetService("DraftManager");
+			if(draftManager == null)
+				return null;
 			var deck = GetDeck(draftManager["m_draftDeck"]);
 			if(deck == null)
 				return null;
