@@ -44,6 +44,23 @@ namespace HearthMirror
 
 		public static void Reinitialize() => Mirror.Clean();
 
+		private static dynamic GetService(string name)
+		{
+			var dynServices = Mirror.Root?["HearthstoneServices"]["s_dynamicServices"];
+			var staticServices = Mirror.Root?["HearthstoneServices"]["s_services"];
+			var hsServices = dynServices != null ? dynServices : staticServices;
+
+			var serviceItems = hsServices["m_services"]["_items"];
+
+			foreach(var service in serviceItems)
+			{
+				if (service["<ServiceTypeName>k__BackingField"] == name)
+					return service["<Service>k__BackingField"];
+			}
+
+			return null;
+		}
+
 		public static List<Card> GetCollection() => TryGetInternal(() => GetCollectionInternal()?.Cards.ToList());
 
 		public static Collection GetFullCollection() => TryGetInternal(GetCollectionInternal);
@@ -68,7 +85,7 @@ namespace HearthMirror
 				}
 			}
 
-			var netCacheValues = Mirror.Root?["NetCache"]["s_instance"]["m_netCache"]["valueSlots"];
+			var netCacheValues = GetService("NetCache")?["m_netCache"]["valueSlots"];
 			if(netCacheValues != null)
 			{
 				foreach(var val in netCacheValues)
@@ -133,7 +150,7 @@ namespace HearthMirror
 
 		private static IEnumerable<TemplateDeck> InternalGetTemplateDecks()
 		{
-			var templateDecks = Mirror.Root?["GameDbf"]?["DeckTemplate"]?["m_records"];
+			var templateDecks = GetService("GameDbf")?["DeckTemplate"]?["m_records"];
 			if(templateDecks == null)
 				yield break; 
 			foreach(var template in templateDecks["_items"])
@@ -149,7 +166,7 @@ namespace HearthMirror
 		public static GameServerInfo GetServerInfo() => TryGetInternal(InternalGetServerInfo);
 		private static GameServerInfo InternalGetServerInfo()
 		{
-			var serverInfo = Mirror.Root?["Network"]["s_instance"]["m_lastGameServerInfo"];
+			var serverInfo = GetService("Network")?["m_state"]?["<LastGameServerInfo>k__BackingField"];
 			if(serverInfo == null)
 				return null;
 			return new GameServerInfo
@@ -168,16 +185,16 @@ namespace HearthMirror
 		}
 
 		public static int GetGameType() => TryGetInternal(InternalGetGameType);
-		private static int InternalGetGameType() => (int) Mirror.Root?["GameMgr"]["s_instance"]["m_gameType"];
+		private static int InternalGetGameType() => (int) GetService("GameMgr")?["m_gameType"];
 
-		public static bool IsSpectating() => TryGetInternal(() => Mirror.Root?["GameMgr"]?["s_instance"]?["m_spectator"]) ?? false;
+		public static bool IsSpectating() => TryGetInternal(() => GetService("GameMgr")?["m_spectator"]) ?? false;
 
 		public static long GetSelectedDeckInMenu() => TryGetInternal(() => (long)(Mirror.Root?["DeckPickerTrayDisplay"]["s_instance"]?["m_selectedCustomDeckBox"]?["m_deckID"] ?? 0));
 
 		public static MedalInfo GetMedalInfo() => TryGetInternal(GetMedalInfoInternal);
 		private static MedalInfo GetMedalInfoInternal()
 		{
-			var netCacheValues = Mirror.Root?["NetCache"]["s_instance"]?["m_netCache"]?["valueSlots"];
+			var netCacheValues = GetService("NetCache")?["m_netCache"]?["valueSlots"];
 			if(netCacheValues == null)
 				return null;
 			dynamic netCacheMedalInfo = null;
@@ -269,7 +286,7 @@ namespace HearthMirror
 		{
 			var matchInfo = new MatchInfo();
 			var gameState = Mirror.Root?["GameState"]["s_instance"];
-			var netCacheValues = Mirror.Root?["NetCache"]["s_instance"]?["m_netCache"]?["valueSlots"];
+			var netCacheValues = GetService("NetCache")?["m_netCache"]?["valueSlots"];
 			if(gameState != null)
 			{
 				var playerIds = gameState["m_playerMap"]["keySlots"];
@@ -315,7 +332,7 @@ namespace HearthMirror
 			}
 			if(matchInfo.LocalPlayer == null || matchInfo.OpposingPlayer == null)
 				return null;
-			var gameMgr = Mirror.Root?["GameMgr"]["s_instance"];
+			var gameMgr = GetService("GameMgr");
 			if(gameMgr != null)
 			{
 				matchInfo.MissionId = gameMgr["m_missionId"];
@@ -364,7 +381,7 @@ namespace HearthMirror
 
 		private static dynamic GetCurrentBrawlMission()
 		{
-			var missions = Mirror.Root?["TavernBrawlManager"]["s_instance"]?["m_missions"];
+			var missions = GetService("TavernBrawlManager")?["m_missions"];
 			if(missions == null) 
 				return null;
 			foreach(var mission in missions)
@@ -468,7 +485,7 @@ namespace HearthMirror
 			return deck;
 		}
 
-		public static int GetFormat() => TryGetInternal(() => (int)Mirror.Root?["GameMgr"]["s_instance"]["m_formatType"]);
+		public static int GetFormat() => TryGetInternal(() => (int)GetService("GameMgr")?["m_formatType"]);
 
 		public static Deck GetEditedDeck() => TryGetInternal(GetEditedDeckInternal);
 		private static Deck GetEditedDeckInternal()
@@ -542,7 +559,7 @@ namespace HearthMirror
 
 		public static bool IsPlayerPlayZoneUpdatingLayout() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_myPlayZone"]?["m_updatingLayout"]) ?? false;
 
-		public static SceneMode GetCurrentSceneMode() => (SceneMode)(TryGetInternal(() => Mirror.Root?["SceneMgr"]?["s_instance"]?["m_mode"]) ?? SceneMode.INVALID);
+		public static SceneMode GetCurrentSceneMode() => (SceneMode)(TryGetInternal(() => GetService("SceneMgr")?["m_mode"]) ?? SceneMode.INVALID);
 
 		public static int GetNumCardsPlayerHand() => TryGetInternal(() => Mirror.Root?["InputManager"]?["s_instance"]?["m_myHandZone"]?["m_cards"]?["_size"]) ?? 0;
 
@@ -600,7 +617,7 @@ namespace HearthMirror
 
 		private static IEnumerable<RewardData> GetArenaRewardsInternal()
 		{
-			var rewards = Mirror.Root?["DraftManager"]["s_instance"]["m_chest"]?["<Rewards>k__BackingField"]?["_items"];
+			var rewards = GetService("DraftManager")?["m_chest"]?["<Rewards>k__BackingField"]?["_items"];
 			return RewardDataParser.Parse(rewards);
 		}
 
@@ -648,7 +665,7 @@ namespace HearthMirror
 				MaxLosses = mission["tavernBrawlSpec"]?["<GameContentSeason>k__BackingField"]?["_MaxLosses"]
 			};
 
-			var records = Mirror.Root?["TavernBrawlManager"]["s_instance"]?["m_playerRecords"];
+			var records = GetService("TavernBrawlManager")?["m_playerRecords"];
 			if(records == null)
 				return null;
 
@@ -744,7 +761,7 @@ namespace HearthMirror
 
 		private static DeckDbfRecord GetDbfDeckTopCard(int deckDbfRecord)
 		{
-			var decks = Mirror.Root?["GameDbf"]?["Deck"]?["m_records"];
+			var decks = GetService("GameDbf")?["Deck"]?["m_records"];
 			if(decks == null)
 				return null;
 			var items = decks["_items"];
@@ -763,7 +780,7 @@ namespace HearthMirror
 
 		private static dynamic GetDeckCardDbfRecord(int cardId)
 		{
-			var cards = Mirror.Root?["GameDbf"]?["DeckCard"]?["m_records"];
+			var cards = GetService("GameDbf")?["DeckCard"]?["m_records"];
 			if(cards == null)
 				return null;
 			var items = cards["_items"];
@@ -780,7 +797,7 @@ namespace HearthMirror
 
 		private static string GetCardIdFromCardDbIdInternal(int dbId)
 		{
-			var cards = Mirror.Root?["GameDbf"]?["Card"]?["m_records"];
+			var cards = GetService("GameDbf")?["Card"]?["m_records"];
 			if (cards == null)
 				return null;
 			var items = cards["_items"];
