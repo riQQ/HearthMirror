@@ -54,7 +54,7 @@ namespace HearthMirror
 
 			foreach(var service in serviceItems)
 			{
-				if (service["<ServiceTypeName>k__BackingField"] == name)
+				if (service?["<ServiceTypeName>k__BackingField"] == name)
 					return service["<Service>k__BackingField"];
 			}
 
@@ -830,10 +830,15 @@ namespace HearthMirror
 #if(DEBUG)
 		public static void DebugHelper()
 		{
+			var netCache = GetService("NetCache");
+			var draftManager = GetService("draftManager");
+			var gameMgr = GetService("GameMgr");
+			var network = GetService("Network");
+			var gameDbf = GetService("GameDbf");
 			var data = new[]
 			{
-				"NetCache", "GameState", "Log", "TavernBrawlManager", "TavernBrawlDisplay", "BnetPresenceMgr", "DraftManager",
-				"PackOpening", "CollectionManagerDisplay", "GameMgr", "Network", "DraftManager", "DraftDisplay", "CollectionManager",
+				"GameState", "Log", "TavernBrawlManager", "TavernBrawlDisplay", "BnetPresenceMgr",
+				"PackOpening", "CollectionManagerDisplay", "DraftManager", "DraftDisplay", "CollectionManager",
 				"RankMgr", "GameSaveDataManager"
 			}.Select(x => Mirror.Root?[x]?["s_instance"]).ToList();
 			System.Diagnostics.Debugger.Break();

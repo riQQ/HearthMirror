@@ -19,7 +19,7 @@ namespace HearthMirror.Mono
 		public MonoClass Class => new MonoClass(_view, _view.ReadUint(_vtable));
 
 		public IEnumerable<KeyValuePair<string, object>> Fields
-			=> Class.Fields.Where(x => !x.Type.IsStatic).Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(this)));
+			=> Class.Fields.Where(x => !x.Name.StartsWith("<>")).Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(this)));
 
 		public dynamic this[string key] => Fields.FirstOrDefault(x => x.Key == key).Value;
 

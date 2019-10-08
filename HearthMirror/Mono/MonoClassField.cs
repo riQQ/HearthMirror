@@ -59,6 +59,11 @@ namespace HearthMirror.Mono
 					var po = _view.ReadUint(data + offset);
 					return po == 0 ? null : new MonoObject(_view, po);
 				}
+				if (type.IsLiteral && typeType == MonoTypeEnum.String)
+				{
+					// Ignore string constants for now
+					return null;
+				}
 				if(typeType == MonoTypeEnum.ValueType)
 				{
 					var sClass = new MonoClass(_view, type.Data);
