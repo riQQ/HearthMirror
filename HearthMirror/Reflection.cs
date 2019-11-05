@@ -726,6 +726,31 @@ namespace HearthMirror
 			};
 		}
 
+		public static BattlegroundRatingInfo GetBattlegroundRatingInfo() => TryGetInternal(GetBattlegroundRatingInfoInternal);
+
+		private static BattlegroundRatingInfo GetBattlegroundRatingInfoInternal()
+		{
+			var netCacheValues = GetService("NetCache")?["m_netCache"]?["valueSlots"];
+			if (netCacheValues == null)
+				return null;
+
+			BattlegroundRatingInfo ratingInfo = null;
+
+			foreach(var netCache in netCacheValues)
+			{
+				if(netCache?.Class.Name != "NetCacheBaconRatingInfo")
+					continue;
+				ratingInfo = new BattlegroundRatingInfo() 
+				{
+					Rating = netCache["<Rating>k__BackingField"],
+					PrevRating = netCache["<PreviousBaconRatingInfo>k__BackingField"]?["<Rating>k__BackingField"]
+				};
+				break;
+			}
+
+			return ratingInfo;
+		}
+
 		internal static int GetKeyIndex(dynamic map, int key)
 		{
 			var keys = map["keySlots"];

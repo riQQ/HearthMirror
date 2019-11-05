@@ -59,6 +59,13 @@ namespace HearthMirror.Tests
 		}
 
 		[TestMethod]
+		public void GameState_InBattlegroundScreen()
+		{
+			var rating = Reflection.GetBattlegroundRatingInfo();
+			Assert.IsTrue(rating.Rating > 0, "No rating found");
+		}
+
+		[TestMethod]
 		public void GameState_InCollectionScreen_Editing()
 		{
 			var deck = Reflection.GetEditedDeck();
