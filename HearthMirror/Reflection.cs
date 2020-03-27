@@ -234,6 +234,22 @@ namespace HearthMirror
 			};
 		}
 
+		private static MatchInfo.MedalInfo GetMatchMedalInfo(dynamic medalInfo)
+		{
+			var starLevel = medalInfo?["starLevel"];
+			var leagueId = medalInfo?["leagueId"];
+			var rankConfig = starLevel != null && leagueId != null ? GetLeagueRankRecord(leagueId, starLevel) : null;
+			return new MatchInfo.MedalInfo
+			{
+				Stars = medalInfo?["earnedStars"],
+				MaxStars = rankConfig?["m_stars"],
+				StarMultipier = medalInfo?["starsPerWin"],
+				StarLevel = starLevel,
+				LegendRank = medalInfo?["legendIndex"],
+				LeagueId = leagueId,
+			};
+		}
+
 		private static dynamic GetLeagueRankRecord(int leagueId, int starLevel)
 		{
 			var rankMgr = Mirror.Root?["RankMgr"]["s_instance"];
@@ -265,6 +281,8 @@ namespace HearthMirror
 
 		private static int GetRankValue(dynamic medalInfo)
 		{
+			if (medalInfo == null)
+				return 0;
 			var leagueId = medalInfo["leagueId"];
 			var starLevel = medalInfo["starLevel"];
 			var leagueRankRecord = GetLeagueRankRecord(leagueId, starLevel);
@@ -293,41 +311,36 @@ namespace HearthMirror
 				var players = gameState["m_playerMap"]["valueSlots"];
 				for(var i = 0; i < playerIds.Length; i++)
 				{
-					if(players[i]?.Class.Name != "Player")
+					var player = players[i];
+					if(player?.Class.Name != "Player")
 						continue;
-					var medalInfo = players[i]["m_medalInfo"];
+
+					var medalInfo = player["m_medalInfo"];
 					var sMedalInfo = medalInfo?["m_currMedalInfo"];
 					var wMedalInfo = medalInfo?["m_currWildMedalInfo"];
-					var name = players[i]["m_name"];
-					var sRank = sMedalInfo != null ? GetRankValue(sMedalInfo) : 0;
-					var sLegendRank = sMedalInfo?["legendIndex"] ?? 0;
-					var wRank = wMedalInfo != null ? GetRankValue(wMedalInfo) : 0;
-					var wLegendRank = wMedalInfo?["legendIndex"] ?? 0;
-					var cardBack = players[i]["m_cardBackId"];
-					var id = playerIds[i];
-					var side = (Side)players[i]["m_side"];
-					var account = players[i]["m_gameAccountId"];
+
+					var account = player["m_gameAccountId"];
 					var accountId = new AccountId {Hi = account?["m_hi"] ?? 0, Lo = account?["m_lo"] ?? 0};
-					var battleTag = GetBattleTag(accountId);
-					if(side == Side.FRIENDLY)
+
+					var matchInfoPlayer = new MatchInfo.Player
 					{
-						dynamic netCacheMedalInfo = null;
-						if(netCacheValues != null)
-						{
-							foreach(var netCache in netCacheValues)
-							{
-								if(netCache?.Class.Name != "NetCacheMedalInfo")
-									continue;
-								netCacheMedalInfo = netCache;
-								break;
-							}
-						}
-						var sStars = netCacheMedalInfo?["<Standard>k__BackingField"]["<Stars>k__BackingField"];
-						var wStars = netCacheMedalInfo?["<Wild>k__BackingField"]["<Stars>k__BackingField"];
-						matchInfo.LocalPlayer = new MatchInfo.Player(id, name, sRank, sLegendRank, sStars, wRank, wLegendRank, wStars, cardBack, accountId, battleTag);
-					}
+						Id = playerIds[i],
+						Name = player["m_name"],
+						Standard = GetMatchMedalInfo(sMedalInfo),
+						StandardRank = GetRankValue(sMedalInfo),
+						Wild = GetMatchMedalInfo(wMedalInfo),
+						WildRank = GetRankValue(wMedalInfo),
+						CardBackId = player["m_cardBackId"],
+						AccountId = accountId,
+						BattleTag = GetBattleTag(accountId),
+					};
+
+
+					var side = (Side)player["m_side"];
+					if (side == Side.FRIENDLY)
+						matchInfo.LocalPlayer = matchInfoPlayer;
 					else if (side == Side.OPPOSING)
-						matchInfo.OpposingPlayer = new MatchInfo.Player(id, name, sRank, sLegendRank, 0, wRank, wLegendRank, 0, cardBack, accountId, battleTag);
+						matchInfo.OpposingPlayer = matchInfoPlayer;
 				}
 			}
 			if(matchInfo.LocalPlayer == null || matchInfo.OpposingPlayer == null)
@@ -855,6 +868,7 @@ namespace HearthMirror
 #if(DEBUG)
 		public static void DebugHelper()
 		{
+			var matchInfo = GetMatchInfo();
 			var netCache = GetService("NetCache");
 			var draftManager = GetService("draftManager");
 			var gameMgr = GetService("GameMgr");
